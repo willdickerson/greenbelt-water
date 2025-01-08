@@ -6,8 +6,6 @@ A real-time dashboard showing water levels at various points along Barton Creek 
 
 - Real-time water level data from USGS monitoring stations
 - Historical comparisons for each monitoring point
-- Automatic updates every minute
-- Mobile-responsive design
 - Color-coded indicators for high/low water levels
 
 ## Data Sources
