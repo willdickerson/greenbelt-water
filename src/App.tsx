@@ -14,29 +14,32 @@ function WaterLevelCard({ level, stats }) {
   const currentLevel = parseFloat(level.value);
   const { median } = stats.currentStats;
   const status = currentLevel < median ? 'Low' : 'High';
-  const statusColor = currentLevel < median ? 'text-amber-600' : 'text-blue-600';
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h3 className="font-medium text-gray-900 mb-3">
+    <div className="bg-[#faf3e0] border border-[#c5a898] rounded-lg p-6">
+      <h3 className="font-medium text-[#524343] mb-3">
         <a 
           href={`https://waterdata.usgs.gov/monitoring-location/${level.siteId}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-blue-600 hover:underline"
+          className="text-[#96624e]"
         >
           {level.siteName}
         </a>
       </h3>
       <div className="flex items-baseline gap-3">
-        <span className="text-3xl font-bold text-gray-900">
+        <span className="text-4xl font-bold text-[#524343]">
           {currentLevel.toFixed(1)}'
         </span>
-        <span className={`text-sm font-medium ${statusColor}`}>
+        <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+          currentLevel < median 
+            ? 'bg-[#e6c9c9] text-[#96624e]' 
+            : 'bg-[#c5dedd] text-[#2c4a52]'
+        }`}>
           {status}
-        </span>
+        </div>
       </div>
-      <div className="text-xs text-gray-500 mt-2">
+      <div className="text-xs text-[#96624e] mt-3">
         Updated {new Date(level.dateTime).toLocaleString()}
       </div>
     </div>
@@ -101,42 +104,62 @@ function App() {
     fetchWaterData();
     fetchAllUSGSStats();
 
-    const interval = setInterval(fetchWaterData, 900000); // Refresh every 15 minutes
+    const interval = setInterval(() => {
+      fetchWaterData();
+      fetchAllUSGSStats();
+    }, 60000);
+
     return () => clearInterval(interval);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Loading water levels...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-500">{error}</div>
-      </div>
-    );
-  }
+  const allReadingsBelowAverage = waterLevels.every(level => {
+    const stats = siteStats[level.siteId]?.currentStats;
+    if (!stats) return false;
+    return parseFloat(level.value) < stats.median;
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-8 text-center">
-          Barton Creek Water Levels
-        </h1>
-        
-        <div className="grid gap-4 sm:grid-cols-2">
-          {waterLevels.map(level => (
-            <WaterLevelCard
-              key={level.siteId}
-              level={level}
-              stats={siteStats[level.siteId]}
-            />
-          ))}
+    <div className="min-h-screen bg-[#faf3e0] py-8 px-4">
+      <header className="py-4 mb-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <h1 className="text-2xl font-semibold text-center text-[#524343]">Barton Creek Water Levels</h1>
         </div>
+      </header>
+      <div className="max-w-6xl mx-auto">
+        <div className={`mb-6 p-4 rounded-lg text-center text-sm font-medium border border-[#c5a898] ${
+          allReadingsBelowAverage 
+            ? 'bg-[#e6c9c9] text-[#96624e]'
+            : 'bg-[#c5dedd] text-[#2c4a52]'
+        }`}>
+          Water levels are currently {allReadingsBelowAverage ? 'below' : 'above'} historical averages
+          <span className="block text-xs mt-1 opacity-75">
+            Last updated: {
+              waterLevels.length > 0 
+                ? new Date(Math.max(...waterLevels.map(l => new Date(l.dateTime).getTime()))).toLocaleString()
+                : 'Loading...'
+            }
+          </span>
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-pulse text-[#96624e]">Loading water levels...</div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="text-[#96624e]">{error}</div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {waterLevels.map(level => (
+              <WaterLevelCard 
+                key={level.siteId} 
+                level={level} 
+                stats={siteStats[level.siteId]}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
