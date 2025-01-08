@@ -61,6 +61,23 @@ function WaterLevelCard({
       <div className="text-xs text-[#96624e] mt-3">
         Updated {new Date(level.dateTime).toLocaleString()}
       </div>
+      <div className="mt-4 pt-4 border-t border-[#c5a898]">
+        <div className="text-sm text-[#524343]">Historical for this day:</div>
+        <div className="grid grid-cols-3 gap-3 mt-2">
+          <div>
+            <div className="text-xs text-[#96624e]">Low</div>
+            <div className="text-[#524343] font-medium">{stats.currentStats.min.toFixed(1)}'</div>
+          </div>
+          <div>
+            <div className="text-xs text-[#96624e]">Median</div>
+            <div className="text-[#524343] font-medium">{stats.currentStats.median.toFixed(1)}'</div>
+          </div>
+          <div>
+            <div className="text-xs text-[#96624e]">High</div>
+            <div className="text-[#524343] font-medium">{stats.currentStats.max.toFixed(1)}'</div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -64,16 +64,3 @@ a {
 a:hover {
   color: #7a4e3f;
 }
-
-/* Leaflet map styles */
-.leaflet-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.leaflet-div-icon {
-  background: transparent;
-  border: none;
-}
