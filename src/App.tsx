@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { fetchUSGSStats, getStatsForDay } from './usgs';
+import { useEffect, useState } from 'react';
+import { fetchUSGSStats, getStatsForDay, USGSStats } from './usgs';
 
 const SITE_IDS = [
   '08155200', // Barton Ck at SH 71
@@ -8,9 +8,20 @@ const SITE_IDS = [
   '08155400'  // Barton Ck abv Barton Spgs
 ];
 
-function WaterLevelCard({ level, stats }) {
+type WaterLevel = {
+  value: string;
+  dateTime: string;
+  siteName: string;
+  siteId: string;
+};
+
+type SiteStatsMap = {
+  [key: string]: { currentStats: USGSStats | null };
+};
+
+function WaterLevelCard({ level, stats }: { level: WaterLevel; stats: { currentStats: USGSStats | null } | undefined }) {
   if (!level || !stats?.currentStats) return null;
-  
+
   const currentLevel = parseFloat(level.value);
   const { median } = stats.currentStats;
   const status = currentLevel < median ? 'Low' : 'High';
@@ -47,10 +58,10 @@ function WaterLevelCard({ level, stats }) {
 }
 
 function App() {
-  const [waterLevels, setWaterLevels] = useState([]);
-  const [siteStats, setSiteStats] = useState({});
+  const [waterLevels, setWaterLevels] = useState<WaterLevel[]>([]);
+  const [siteStats, setSiteStats] = useState<SiteStatsMap>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWaterData = async () => {
@@ -62,7 +73,7 @@ function App() {
         const data = await response.json();
         
         const timeSeries = data.value.timeSeries;
-        const levels = timeSeries.map(series => ({
+        const levels = timeSeries.map((series: any) => ({
           value: series.values[0].value[0].value,
           dateTime: series.values[0].value[0].dateTime,
           siteName: series.sourceInfo.siteName,
@@ -87,7 +98,7 @@ function App() {
         const currentMonth = now.getMonth() + 1;
         const currentDay = now.getDate();
         
-        const newSiteStats = {};
+        const newSiteStats: SiteStatsMap = {};
         SITE_IDS.forEach((siteId, index) => {
           const data = statsResults[index];
           newSiteStats[siteId] = {

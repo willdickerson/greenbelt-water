@@ -48,12 +48,13 @@ export const parseUSGSStats = (dataString: string): ParsedUSGSData => {
       if (!isNaN(row.month_nu) && !isNaN(row.day_nu)) {
         const key = `${row.month_nu.toString().padStart(2, '0')}-${row.day_nu.toString().padStart(2, '0')}`;
         data[key] = {
-          min: row.min_va,
-          max: row.max_va,
-          median: row.p50_va,
-          p25: row.p25_va,
-          p75: row.p75_va,
-          mean: row.mean_va
+          month_nu: row.month_nu,
+          day_nu: row.day_nu,
+          p50_va: row.p50_va,
+          min_va: row.min_va,
+          max_va: row.max_va,
+          p25_va: row.p25_va,
+          p75_va: row.p75_va
         };
       }
     }
@@ -69,11 +70,11 @@ export const getStatsForDay = (data: ParsedUSGSData, month: number, day: number)
   if (!row) return null;
   
   return {
-    median: row.median,
-    min: row.min,
-    max: row.max,
-    p25: row.p25,
-    p75: row.p75
+    median: row.p50_va,
+    min: row.min_va,
+    max: row.max_va,
+    p25: row.p25_va,
+    p75: row.p75_va
   };
 };
 
