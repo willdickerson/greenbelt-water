@@ -1,50 +1,44 @@
-# React + TypeScript + Vite
+# Barton Creek Water Levels
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time dashboard showing water levels at various points along Barton Creek in Austin, Texas. The app compares current water levels with historical medians to help visualize if water levels are higher or lower than usual.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Real-time water level data from USGS monitoring stations
+- Historical comparisons for each monitoring point
+- Automatic updates every minute
+- Mobile-responsive design
+- Color-coded indicators for high/low water levels
 
-## Expanding the ESLint configuration
+## Data Sources
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Data is sourced from the USGS Water Services API, specifically from the following monitoring stations:
+- Barton Creek at SH 71 (08155200)
+- Barton Creek at Lost Creek Blvd (08155240)
+- Barton Creek at Loop 360 (08155300)
+- Barton Creek above Barton Springs (08155400)
 
-- Configure the top-level `parserOptions` property like this:
+## Development
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+This project uses:
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+
+To run locally:
+
+```bash
+npm install
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Deployment
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Build the project:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run build
 ```
+
+The built files will be in the `dist` directory, ready for deployment.
